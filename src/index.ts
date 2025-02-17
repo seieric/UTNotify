@@ -2,7 +2,7 @@ import { app, input, output, InvocationContext } from "@azure/functions";
 
 import NewsFetcher from "./lib/NewsFetcher";
 import NewsPoster from "./lib/NewsPoster";
-import { detectNewNewsItem } from "./lib/utils";
+import { createStorageJsonString, detectNewNewsItem } from "./lib/utils";
 
 const blobInput = input.storageBlob({
   path: "samples-workitems/newsitems.json",
@@ -36,8 +36,7 @@ app.timer("checkNewsAndPost", {
     const newItems = detectNewNewsItem(previousItems, latestItems);
 
     // 本日のお知らせをストレージに保存
-    const updatedItems = previousItems.concat(newItems);
-    context.extraOutputs.set(blobOutput, JSON.stringify(updatedItems));
+    context.extraOutputs.set(blobOutput, createStorageJsonString(previousItems, newItems));
 
     // お知らせを投稿
     const newsPoster = new NewsPoster();
