@@ -4,16 +4,12 @@ import NewsFetcher from "./lib/NewsFetcher";
 import NewsPoster from "./lib/NewsPoster";
 import { createStorageJsonString, detectNewNewsItem } from "./lib/utils";
 
-const blobInput = input.storageBlob({
-  path: "samples-workitems/newsitems.json",
-  connection: "MyStorageConnectionAppSetting",
-});
-
-const blobOutput = output.storageBlob({
-  // 任意のパスやファイル名を設定してください
-  path: "samples-workitems/newsitems.json",
-  connection: "MyStorageConnectionAppSetting",
-});
+const storageBlobOptions = {
+    path: "newsitems.json",
+    connection: process.env.BLOB_STORAGE_CONNECTION,
+}
+const blobInput = input.storageBlob(storageBlobOptions);
+const blobOutput = output.storageBlob(storageBlobOptions);
 
 app.timer("checkNewsAndPost", {
   schedule: "0 */5 * * * *",
@@ -44,5 +40,6 @@ app.timer("checkNewsAndPost", {
       context.log(`[New News]${item.toString()}`);
       newsPoster.post(item);
     }
+    context.log(`Posted ${newItems.length}/${latestItems.length} news items. Total ${previousItems.length + newItems.length} news items posted today.`);
   },
 });
