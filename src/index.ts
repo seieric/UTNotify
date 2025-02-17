@@ -22,8 +22,6 @@ app.timer("checkNewsAndPost", {
     const today = new Date(new Date().setHours(0, 0, 0, 0));
     const latestItems = newsItems.filter((item) => item.isNewerThan(today));
 
-    if (latestItems.length === 0) return;
-
     // ストレージから本日配信したお知らせを取得
     const blobContent = await context.extraInputs.get(blobInput);
     const previousItems = blobContent ? JSON.parse(blobContent as string) : [];
@@ -40,6 +38,6 @@ app.timer("checkNewsAndPost", {
       context.log(`[New News]${item.toString()}`);
       newsPoster.post(item);
     }
-    context.log(`Posted ${newItems.length}/${latestItems.length} news items. Total ${previousItems.length + newItems.length} news items posted today.`);
+    context.log(`Posted items: ${newItems.length}/${latestItems.length} Total items posted today: ${previousItems.length + newItems.length}`);
   },
 });
