@@ -24,7 +24,7 @@ export default class NewsItem {
     this.date = date;
   }
 
-  public isNotOlderThan(date: Date): boolean {
+  public isNewerThan(date: Date): boolean {
     return this.date >= date;
   }
 

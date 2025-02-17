@@ -8,7 +8,9 @@ app.timer('checkNewsAndPost', {
         context.log('Timer function processed request.');
         const newsFetcher = new NewsFetcher();
         const newsItems = await newsFetcher.fetch();
-        for (const newsItem of newsItems) {
+        const today = new Date(new Date().setHours(0, 0, 0, 0));
+        const latestItems = newsItems.filter((item) => item.isNewerThan(today));
+        for (const newsItem of latestItems) {
             context.log(newsItem.toString());
         }
     },
