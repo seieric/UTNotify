@@ -14,7 +14,7 @@ const blobOutput = output.storageBlob(storageBlobOptions);
 app.timer("checkNewsAndPost", {
   schedule: "0 */5 * * * *",
   handler: async (myTimer, context: InvocationContext) => {
-    context.log(`Execution started. Current time: ${new Date().toISOString}`);
+    context.log(`Execution started. Current time: ${new Date().toISOString()}`);
 
     // 最新のお知らせを取得
     const newsFetcher = new NewsFetcher();
@@ -45,7 +45,6 @@ app.timer("checkNewsAndPost", {
 
     // お知らせを投稿
     const newsPoster = new NewsPoster();
-    context.log()
     for (const item of newItems) {
       context.log(`[New News]${item.toString()} (${item.date.toISOString()})`);
       newsPoster.post(item);
