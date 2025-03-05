@@ -6,7 +6,7 @@ import NewsPoster from "./lib/NewsPoster";
 import { createStorageJsonString, detectNewNewsItem } from "./lib/utils";
 
 const storageBlobOptions = {
-  path: "newsitems.json",
+  path: "utnotify/newsitems.json",
   connection: process.env.BLOB_STORAGE_CONNECTION,
 };
 const blobInput = input.storageBlob(storageBlobOptions);
