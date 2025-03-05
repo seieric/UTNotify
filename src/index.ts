@@ -7,7 +7,7 @@ import { createStorageJsonString, detectNewNewsItem } from "./lib/utils";
 
 const storageBlobOptions = {
   path: "utnotify/newsitems.json",
-  connection: "",
+  connection: "Storage",
 };
 const blobInput = input.storageBlob(storageBlobOptions);
 const blobOutput = output.storageBlob(storageBlobOptions);
