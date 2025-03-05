@@ -1,3 +1,4 @@
+import { DateTime } from "luxon";
 import NewsItem from "./NewsItem";
 
 // 新しいお知らせを検出する関数
@@ -29,7 +30,7 @@ export function createStorageJsonString(
   newItems: Array<NewsItem>
 ): string {
   // 日付が本日でないものは削除
-  const today = new Date(new Date().setHours(0, 0, 0, 0));
+  const today = DateTime.now().setZone("Asia/Tokyo").startOf("day");
   const updatedItems = previousItems.filter((item) => item.isNewerThan(today));
 
   // 新しいお知らせを追加

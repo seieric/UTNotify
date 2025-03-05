@@ -1,4 +1,5 @@
 import { app, input, output, InvocationContext } from "@azure/functions";
+import { DateTime } from "luxon";
 
 import NewsFetcher from "./lib/NewsFetcher";
 import NewsPoster from "./lib/NewsPoster";
@@ -14,7 +15,8 @@ const blobOutput = output.storageBlob(storageBlobOptions);
 app.timer("checkNewsAndPost", {
   schedule: "0 */5 * * * *",
   handler: async (myTimer, context: InvocationContext) => {
-    context.log(`Execution started. Current time: ${new Date().toISOString()}`);
+    const now = DateTime.now().setZone("Asia/Tokyo");
+    context.log(`Execution started. Current time: ${now.toISO()}`);
 
     // 最新のお知らせを取得
     const newsFetcher = new NewsFetcher();
@@ -22,7 +24,7 @@ app.timer("checkNewsAndPost", {
     context.log(`Total fetched items: ${newsItems.length}`);
 
     // 本日のお知らせを絞り込む
-    const today = new Date(new Date().setHours(0, 0, 0, 0));
+    const today = now.startOf("day");
     const latestItems = newsItems.filter((item) => item.isNewerThan(today));
     context.log(`Today's items: ${latestItems.length}`);
 
@@ -31,7 +33,7 @@ app.timer("checkNewsAndPost", {
     const previousItems = blobContent ? JSON.parse(blobContent as string) : [];
     context.log(`Previously posted items: ${previousItems.length}`);
     for (const item of previousItems) {
-      context.log(`[Previous News]${item.toString()} (${item.date.toISOString()})`);
+      context.log(`[Previous News]${item.toString()} (${item.date.toISO()})`);
     }
 
     // 新しいお知らせを検出
@@ -46,7 +48,7 @@ app.timer("checkNewsAndPost", {
     // お知らせを投稿
     const newsPoster = new NewsPoster();
     for (const item of newItems) {
-      context.log(`[New News]${item.toString()} (${item.date.toISOString()})`);
+      context.log(`[New News]${item.toString()} (${item.date.toISO()})`);
       newsPoster.post(item);
     }
     context.log(

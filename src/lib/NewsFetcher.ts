@@ -1,6 +1,7 @@
 import axios, { AxiosStatic } from "axios";
+import { DateTime } from "luxon";
 import { load } from "cheerio";
-import NewsItem, {NotifyTarget} from "./NewsItem";
+import NewsItem, { NotifyTarget } from "./NewsItem";
 
 export default class NewsFetcher {
   private axios: AxiosStatic;
@@ -56,12 +57,15 @@ export default class NewsFetcher {
               }
             }
           }
+          const date = DateTime.fromFormat(dateMatch[1], "yyyy.MM.dd").setZone(
+            "Asia/Tokyo"
+          );
           newsItems.push(
             new NewsItem(
               ddElements.eq(i).find("a").text().trim(),
               this.formatURL(ddElements.eq(i).find("a").attr("href")),
               target,
-              new Date(dateMatch[1])
+              date
             )
           );
         }

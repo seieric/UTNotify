@@ -1,3 +1,5 @@
+import { DateTime } from "luxon";
+
 // お知らせの対象学年
 export enum NotifyTarget {
   ALL = 0,
@@ -10,13 +12,13 @@ export default class NewsItem {
   public title: string;
   public link: string | undefined;
   public target: NotifyTarget;
-  public date: Date;
+  public date: DateTime;
 
   constructor(
     title: string,
     link: string | undefined,
     target: NotifyTarget,
-    date: Date
+    date: DateTime
   ) {
     this.title = title;
     this.link = link;
@@ -24,7 +26,7 @@ export default class NewsItem {
     this.date = date;
   }
 
-  public isNewerThan(date: Date): boolean {
+  public isNewerThan(date: DateTime): boolean {
     return this.date >= date;
   }
 
