@@ -21,12 +21,12 @@ export default class NewsPoster {
   private getNotifyTargetTag(type: NotifyTarget) {
     switch (type) {
       case NotifyTarget.FIRST_YEAR:
-        return "#東大教養1年生向けお知らせ";
+        return "#東大教養1年生向けお知らせ #春から東大";
       case NotifyTarget.SECOND_YEAR:
         return "#東大教養2年生向けお知らせ";
       case NotifyTarget.ALL:
       default:
-        return "#東大教養1年生向けお知らせ #東大教養2年生向けお知らせ";
+        return "#東大教養1年生向けお知らせ #東大教養2年生向けお知らせ #春から東大";
     }
   }
 }
