@@ -1,16 +1,14 @@
-import { app, input, output, InvocationContext } from "@azure/functions";
+import { app, InvocationContext } from "@azure/functions";
 import { DateTime } from "luxon";
+import { writeFileSync, readFileSync, existsSync } from "fs";
+import * as path from "path";
 
 import NewsFetcher from "./lib/NewsFetcher";
 import NewsPoster from "./lib/NewsPoster";
 import { createStorageJsonString, detectNewNewsItem } from "./lib/utils";
 
-const storageBlobOptions = {
-  path: "utnotify/newsitems.json",
-  connection: "Storage",
-};
-const blobInput = input.storageBlob(storageBlobOptions);
-const blobOutput = output.storageBlob(storageBlobOptions);
+const homeDir = process.env.HOME || process.env.USERPROFILE || "";
+const newsJsonPath = path.join(homeDir, "news.json");
 
 app.timer("checkNewsAndPost", {
   schedule: "0 */5 * * * *",
@@ -29,8 +27,8 @@ app.timer("checkNewsAndPost", {
     context.log(`Today's items: ${latestItems.length}`);
 
     // ストレージから本日配信したお知らせを取得
-    const blobContent = await context.extraInputs.get(blobInput);
-    const previousItems = blobContent ? JSON.parse(blobContent as string) : [];
+    const jsonInput = existsSync(newsJsonPath) ? readFileSync(newsJsonPath, "utf-8") : null;
+    const previousItems = jsonInput ? JSON.parse(jsonInput as string) : [];
     context.log(`Previously posted items: ${previousItems.length}`);
     for (const item of previousItems) {
       context.log(`[Previous News]${item.toString()} (${item.date.toISO()})`);
@@ -40,10 +38,7 @@ app.timer("checkNewsAndPost", {
     const newItems = detectNewNewsItem(previousItems, latestItems);
 
     // 本日のお知らせをストレージに保存
-    context.extraOutputs.set(
-      blobOutput,
-      createStorageJsonString(previousItems, newItems)
-    );
+    writeFileSync(newsJsonPath, createStorageJsonString(previousItems, newItems));
 
     // お知らせを投稿
     const newsPoster = new NewsPoster();
